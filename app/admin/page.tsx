@@ -322,8 +322,8 @@ export default function AdminPage() {
             >
 
               {showPassword
-                ? "🙈"
-                : "👁️"}
+                ? "👁️"
+                : "🙈"}
 
             </button>
 
