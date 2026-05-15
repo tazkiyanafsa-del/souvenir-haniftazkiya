@@ -114,9 +114,11 @@ export default function Home() {
         </p>
 
         {/* NAMA */}
-        <h1 className="text-[42px] italic text-white leading-[1.3] mb-14 px-2">
+        <h1 className="text-[38px] italic text-white leading-[1.2] mb-14 px-2">
 
-          Hanif & Tazkiya
+          <div>Hanif &</div>
+
+          <div>Tazkiya</div>
 
         </h1>
 
