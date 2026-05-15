@@ -153,24 +153,60 @@ export default function AdminPage() {
       const worksheet =
         workbook.Sheets[sheetName];
 
-      const jsonData =
+      const jsonData: any[] =
         XLSX.utils.sheet_to_json(
-          worksheet
+          worksheet,
+          {
+            defval: "",
+          }
         );
 
       const formattedData =
-        jsonData.map((item: any) => ({
-          name: item.Nama,
-          code: item.Kode,
-        }));
+        jsonData
+          .filter(
+            (item) =>
+              item.Nama &&
+              item.Kode
+          )
+          .map((item) => ({
+            name: String(item.Nama),
+            code: String(
+              item.Kode
+            ).toUpperCase(),
+          }));
 
-      await supabase
-        .from("guests")
-        .insert(formattedData);
+      if (
+        formattedData.length === 0
+      ) {
+
+        alert(
+          "Format excel salah 😭"
+        );
+
+        return;
+      }
+
+      const { error } =
+        await supabase
+          .from("guests")
+          .insert(formattedData);
+
+      if (error) {
+
+        console.log(error);
+
+        alert(
+          "Import gagal 😭"
+        );
+
+        return;
+      }
 
       fetchGuests();
 
-      alert("Import berhasil 😎");
+      alert(
+        "Import berhasil 😎"
+      );
     };
 
     reader.readAsArrayBuffer(file);
