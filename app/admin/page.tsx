@@ -71,79 +71,81 @@ export default function Home() {
 
   return (
 
-    <main className="min-h-screen bg-[#7A0019] flex items-center justify-center px-4 py-10">
+    <main className="min-h-screen bg-[#7A0019] flex items-center justify-center px-3 py-6 overflow-hidden">
 
-      <div className="w-full max-w-sm bg-[#8B0020] border border-yellow-600 rounded-[40px] p-6 text-center shadow-2xl relative overflow-hidden">
+      <div className="w-full max-w-sm bg-[#8B0020] border border-yellow-700 rounded-[40px] p-5 text-center shadow-2xl relative overflow-hidden">
 
         {/* ORNAMEN */}
-        <div className="absolute top-4 left-4 text-yellow-700 text-3xl opacity-50">
+        <div className="absolute top-4 left-4 text-yellow-700 text-2xl opacity-40">
           ❀
         </div>
 
-        <div className="absolute top-4 right-4 text-yellow-700 text-3xl opacity-50">
+        <div className="absolute top-4 right-4 text-yellow-700 text-2xl opacity-40">
           ❀
         </div>
 
-        <div className="absolute bottom-4 left-4 text-yellow-700 text-3xl opacity-50">
+        <div className="absolute bottom-4 left-4 text-yellow-700 text-2xl opacity-40">
           ❀
         </div>
 
-        <div className="absolute bottom-4 right-4 text-yellow-700 text-3xl opacity-50">
+        <div className="absolute bottom-4 right-4 text-yellow-700 text-2xl opacity-40">
           ❀
         </div>
 
         {/* BORDER */}
-        <div className="absolute inset-4 border border-yellow-700 rounded-[30px] pointer-events-none"></div>
+        <div className="absolute inset-3 border border-yellow-700 rounded-[32px] pointer-events-none"></div>
 
-        {/* INISIAL */}
-        <div className="w-52 h-52 mx-auto border border-yellow-600 rounded-full flex items-center justify-center mt-8 mb-12">
+        {/* LOGO */}
+        <div className="w-44 h-44 mx-auto border border-yellow-600 rounded-full flex items-center justify-center mt-6 mb-10">
 
-          <div className="text-yellow-500 text-7xl font-light tracking-[18px]">
+          <div className="text-yellow-500 text-6xl font-light tracking-[12px]">
+
             H | T
+
           </div>
 
         </div>
 
         {/* TITLE */}
-        <p className="text-yellow-500 tracking-[10px] text-lg mb-8">
+        <p className="text-yellow-500 tracking-[8px] text-sm mb-6">
 
           THE WEDDING OF
 
         </p>
 
         {/* NAMA */}
-        <h1 className="text-[44px] md:text-6xl italic text-white px-4 mb-10 leading-[1.3]">
+        <h1 className="text-4xl italic text-white leading-tight mb-10 px-2">
 
           Hanif & Tazkiya
 
         </h1>
 
-        {/* GARIS */}
-        <div className="flex items-center justify-center gap-4 mb-12">
+        {/* TANGGAL */}
+        <div className="flex items-center justify-center gap-3 mb-10">
 
-          <div className="w-16 h-[1px] bg-yellow-500"></div>
+          <div className="w-12 h-[1px] bg-yellow-500"></div>
 
-          <div>
+          <p className="text-yellow-500 tracking-[3px] text-xl">
 
-            <p className="text-yellow-500 tracking-[4px] text-2xl">
-              02 AGUSTUS 2026
-            </p>
+            02 AGUSTUS 2026
 
-          </div>
+          </p>
 
-          <div className="w-16 h-[1px] bg-yellow-500"></div>
+          <div className="w-12 h-[1px] bg-yellow-500"></div>
 
         </div>
 
         {/* ORNAMEN */}
-        <div className="text-yellow-500 text-5xl mb-10">
+        <div className="text-yellow-500 text-4xl mb-8">
+
           ✦
+
         </div>
 
         {/* FORM */}
-        <div className="mt-6">
+        <div>
 
-          <p className="text-white mb-8 text-2xl">
+          <p className="text-white text-xl mb-6">
 
             Masukkan Kode Unik Anda
 
@@ -163,12 +165,12 @@ export default function Home() {
             autoCapitalize="characters"
             spellCheck={false}
             inputMode="text"
-            className="w-full p-6 rounded-[30px] text-center text-black text-3xl outline-none mb-6 uppercase"
+            className="w-full rounded-[28px] bg-[#F5F0E8] text-black text-2xl text-center p-5 outline-none uppercase mb-5"
           />
 
           <button
             onClick={handleClaim}
-            className="w-full bg-gradient-to-r from-yellow-700 to-yellow-500 hover:opacity-90 text-black font-bold py-6 rounded-[30px] transition text-2xl"
+            className="w-full bg-gradient-to-r from-yellow-700 to-yellow-500 text-black font-bold text-xl py-5 rounded-[28px] transition hover:opacity-90"
           >
 
             Klaim Souvenir
@@ -177,9 +179,9 @@ export default function Home() {
 
           {message && (
 
-            <div className="mt-8 bg-[#76001F] border border-yellow-600 rounded-[30px] p-6">
+            <div className="mt-6 bg-[#76001F] border border-yellow-600 rounded-[24px] p-5">
 
-              <p className="text-white text-xl leading-relaxed">
+              <p className="text-white text-lg leading-relaxed">
 
                 {message}
 
