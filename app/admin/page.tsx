@@ -114,7 +114,7 @@ export default function Home() {
         </p>
 
         {/* NAMA */}
-        <h1 className="text-4xl italic text-white leading-tight mb-10 px-2">
+        <h1 className="text-[42px] italic text-white leading-[1.3] mb-14 px-2">
 
           Hanif & Tazkiya
 
