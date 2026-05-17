@@ -6,6 +6,8 @@ import { supabase } from "./lib/supabase";
 export default function Home() {
   const [code, setCode] = useState("");
   const [message, setMessage] = useState("");
+  const [guestName, setGuestName] = useState("");
+  const [success, setSuccess] = useState(false);
 
   async function handleClaim() {
     if (!code) {
@@ -37,11 +39,66 @@ export default function Home() {
       })
       .eq("code", code.toUpperCase());
 
-    setMessage(
-      `Terima kasih ${data.name}, souvenir berhasil di-claim ❤️`
-    );
+    setGuestName(data.name);
+
+    setSuccess(true);
 
     setCode("");
+  }
+
+  if (success) {
+    return (
+      <main className="min-h-screen bg-[#7A0019] flex items-center justify-center px-4 py-6">
+
+        <div className="w-full max-w-sm bg-[#8B0020] border border-yellow-700 rounded-[40px] p-8 text-center shadow-2xl relative overflow-hidden">
+
+          {/* BORDER DALAM */}
+          <div className="absolute inset-3 border border-yellow-700 rounded-[32px] pointer-events-none"></div>
+
+          {/* CHECK */}
+          <div className="text-yellow-400 text-7xl mb-6">
+            ✓
+          </div>
+
+          {/* SAPAAN */}
+          <h1
+            className="text-white text-[40px] leading-tight mb-6"
+            style={{
+              fontFamily: "serif",
+            }}
+          >
+            Halo{" "}
+            <span className="text-yellow-400">
+              {guestName}
+            </span>
+          </h1>
+
+          {/* TERIMA KASIH */}
+          <p className="text-white text-xl leading-relaxed mb-10 opacity-90">
+            Terimakasih sudah menyempatkan hadir
+          </p>
+
+          {/* ICON HADIAH */}
+          <div className="text-[90px] mb-10">
+            🎁
+          </div>
+
+          {/* TEXT BESAR */}
+          <h2
+            className="text-white text-[42px] leading-tight"
+            style={{
+              fontFamily: "serif",
+            }}
+          >
+            SILAHKAN AMBIL
+            <br />
+            SOUVENIR ANDA
+          </h2>
+
+        </div>
+
+      </main>
+    );
   }
 
   return (
@@ -101,7 +158,7 @@ export default function Home() {
 
           <div className="w-14 h-[1px] bg-yellow-500"></div>
 
-          <p className="text-yellow-500 tracking-[2px] text-[16px] whitespace-nowrap">
+          <p className="text-yellow-500 tracking-[2px] text-[16px] whitespace-nowrap opacity-90">
             02 AGUSTUS 2026
           </p>
 
@@ -147,19 +204,6 @@ export default function Home() {
           Klaim Souvenir
         </button>
 
-        {/* ORNAMEN BAWAH */}
-        <div className="flex items-center justify-center gap-3 mt-10 mb-2">
-
-          <div className="w-20 h-[1px] bg-yellow-600"></div>
-
-          <div className="text-yellow-500 text-2xl">
-            ❀
-          </div>
-
-          <div className="w-20 h-[1px] bg-yellow-600"></div>
-
-        </div>
-
         {/* MESSAGE */}
         {message && (
           <div className="mt-6 bg-[#76001F] border border-yellow-600 rounded-[24px] p-4">
@@ -170,6 +214,7 @@ export default function Home() {
 
           </div>
         )}
+
       </div>
     </main>
   );
