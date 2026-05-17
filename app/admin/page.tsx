@@ -114,7 +114,7 @@ export default function Home() {
         </p>
 
         {/* NAMA */}
-        <h1 className="text-[33px] md:text-6xl text-white leading-[1.25] mb-12 px-2 font-semibold">
+        <h1 className="text-[24px] md:text-4xl text-white leading-[1.2] mb-10 px-2 font-semibold opacity-90">
 
           <div>Hanif &</div>
 
