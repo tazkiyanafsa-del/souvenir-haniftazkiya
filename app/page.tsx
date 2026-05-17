@@ -46,6 +46,9 @@ export default function Home() {
     setCode("");
   }
 
+  // =========================
+  // SUCCESS PAGE
+  // =========================
   if (success) {
     return (
       <main className="min-h-screen bg-[#7A0019] flex items-center justify-center px-4 py-6">
@@ -85,14 +88,14 @@ export default function Home() {
 
           {/* TEXT BESAR */}
           <h2
-            className="text-white text-[42px] leading-tight"
+            className="text-white text-[34px] leading-[1.3] tracking-[2px]"
             style={{
               fontFamily: "serif",
             }}
           >
-            SILAHKAN AMBIL
-            <br />
-            SOUVENIR ANDA
+            <div>SILAHKAN AMBIL</div>
+
+            <div>SOUVENIR ANDA</div>
           </h2>
 
         </div>
@@ -101,6 +104,9 @@ export default function Home() {
     );
   }
 
+  // =========================
+  // MAIN PAGE
+  // =========================
   return (
     <main className="min-h-screen bg-[#7A0019] flex items-center justify-center px-4 py-6">
 
