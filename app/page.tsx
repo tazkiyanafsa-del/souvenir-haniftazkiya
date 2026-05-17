@@ -77,16 +77,14 @@ export default function Home() {
 
         {/* NAMA */}
         <h1
+          className="text-[28px] md:text-[42px] text-white leading-[1.1] mb-8 opacity-90"
           style={{
-            fontFamily: "Times New Roman",
+            fontFamily: "cursive",
           }}
-          className="text-[18px] md:text-2xl italic text-white leading-[1.2] mb-8 opacity-90"
         >
-
           <div>Hanif &</div>
 
           <div>Tazkiya</div>
-
         </h1>
 
         {/* TANGGAL */}
