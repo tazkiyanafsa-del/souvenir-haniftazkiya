@@ -101,7 +101,7 @@ export default function Home() {
 
           <div className="w-14 h-[1px] bg-yellow-500"></div>
 
-          <p className="text-yellow-500 tracking-[3px] text-[22px] whitespace-nowrap">
+          <p className="text-yellow-500 tracking-[2px] text-[16px] whitespace-nowrap">
             02 AGUSTUS 2026
           </p>
 
