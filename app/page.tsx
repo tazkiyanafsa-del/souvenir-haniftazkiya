@@ -64,11 +64,16 @@ export default function Home() {
         {/* LOGO */}
         <div className="w-44 h-44 mx-auto border border-yellow-600 rounded-full flex items-center justify-center mt-8 mb-10">
 
-          <div className="text-yellow-500 text-6xl tracking-[12px] font-light flex items-center gap-5">
+          <div
+            className="text-yellow-500 text-5xl flex items-center gap-4"
+            style={{
+              fontFamily: "Times New Roman",
+            }}
+          >
 
             <span>H</span>
 
-            <span>|</span>
+            <span className="opacity-80">|</span>
 
             <span>T</span>
 
@@ -96,7 +101,7 @@ export default function Home() {
 
           <div className="w-14 h-[1px] bg-yellow-500"></div>
 
-          <p className="text-yellow-500 tracking-[3px] text-lg">
+          <p className="text-yellow-500 tracking-[3px] text-[22px] whitespace-nowrap">
             02 AGUSTUS 2026
           </p>
 
