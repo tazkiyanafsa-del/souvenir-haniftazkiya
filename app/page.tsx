@@ -26,11 +26,16 @@ export default function Home() {
       return;
     }
 
+    // =========================
+    // JIKA SUDAH DIAMBIL
+    // =========================
     if (data.claimed) {
-      setMessage("Souvenir sudah pernah diambil");
-      return;
+      return setMessage("USED");
     }
 
+    // =========================
+    // UPDATE CLAIM
+    // =========================
     await supabase
       .from("guests")
       .update({
@@ -109,6 +114,39 @@ export default function Home() {
   // =========================
   return (
     <main className="min-h-screen bg-[#7A0019] flex items-center justify-center px-4 py-6">
+
+      {/* USED PAGE */}
+      {message === "USED" && (
+
+        <div className="fixed inset-0 bg-[#7A0019] flex items-center justify-center px-4 z-50">
+
+          <div className="w-full max-w-[280px] bg-[#8B0020] border border-[#B8860B] rounded-[30px] p-8 text-center relative shadow-2xl">
+
+            {/* BORDER DALAM */}
+            <div className="absolute inset-3 border border-[#B8860B] rounded-[22px] opacity-40"></div>
+
+            {/* ICON X */}
+            <div className="text-white text-6xl mb-5 opacity-80">
+              ✕
+            </div>
+
+            {/* TITLE */}
+            <h2 className="text-white text-[30px] leading-tight font-semibold mb-4">
+              Souvenir Sudah
+              <br />
+              Pernah Diambil
+            </h2>
+
+            {/* SUBTITLE */}
+            <p className="text-white/70 text-sm">
+              Kode ini sudah digunakan.
+            </p>
+
+          </div>
+
+        </div>
+
+      )}
 
       <div className="w-full max-w-sm bg-[#8B0020] border border-yellow-700 rounded-[40px] p-5 text-center shadow-2xl relative overflow-hidden">
 
@@ -209,17 +247,6 @@ export default function Home() {
         >
           Klaim Souvenir
         </button>
-
-        {/* MESSAGE */}
-        {message && (
-          <div className="mt-6 bg-[#76001F] border border-yellow-600 rounded-[24px] p-4">
-
-            <p className="text-white text-lg">
-              {message}
-            </p>
-
-          </div>
-        )}
 
       </div>
     </main>
