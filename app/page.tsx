@@ -76,7 +76,12 @@ export default function Home() {
         </p>
 
         {/* NAMA */}
-        <h1 className="text-[18px] md:text-2xl italic text-white leading-[1.2] mb-8 opacity-90 font-serif">
+        <h1
+          style={{
+            fontFamily: "Times New Roman",
+          }}
+          className="text-[18px] md:text-2xl italic text-white leading-[1.2] mb-8 opacity-90"
+        >
 
           <div>Hanif &</div>
 
