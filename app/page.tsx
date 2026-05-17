@@ -4,39 +4,68 @@ import { useState } from "react";
 import { supabase } from "./lib/supabase";
 
 export default function Home() {
-  const [code, setCode] = useState("");
-  const [message, setMessage] = useState("");
-  const [guestName, setGuestName] = useState("");
-  const [success, setSuccess] = useState(false);
+
+  const [code, setCode] =
+    useState("");
+
+  const [message, setMessage] =
+    useState("");
+
+  const [guestName, setGuestName] =
+    useState("");
+
+  const [success, setSuccess] =
+    useState(false);
 
   async function handleClaim() {
+
     if (!code) {
-      setMessage("Masukkan kode unik terlebih dahulu");
+
+      setMessage(
+        "Masukkan kode unik terlebih dahulu"
+      );
+
       return;
     }
 
-    const { data, error } = await supabase
-      .from("guests")
-      .select("*")
-      .eq("code", code.toUpperCase())
-      .single();
+    const { data, error } =
+      await supabase
+        .from("guests")
+        .select("*")
+        .eq(
+          "code",
+          code.toUpperCase()
+        )
+        .single();
 
+    // KODE TIDAK DITEMUKAN
     if (error || !data) {
-      setMessage("Kode tidak ditemukan");
+
+      setMessage("NOT_FOUND");
+
       return;
     }
 
+    // SUDAH DIAMBIL
     if (data.claimed) {
-      return setMessage("USED");
+
+      setMessage("USED");
+
+      return;
     }
 
+    // UPDATE CLAIM
     await supabase
       .from("guests")
       .update({
         claimed: true,
-        claimed_at: new Date().toISOString(),
+        claimed_at:
+          new Date().toISOString(),
       })
-      .eq("code", code.toUpperCase());
+      .eq(
+        "code",
+        code.toUpperCase()
+      );
 
     setGuestName(data.name);
 
@@ -49,7 +78,9 @@ export default function Home() {
   // SUCCESS PAGE
   // =========================
   if (success) {
+
     return (
+
       <main className="min-h-screen bg-[#7A0019] flex items-center justify-center px-4 py-6">
 
         <div className="w-full max-w-sm bg-[#8B0020] border border-[#C9A227] rounded-[42px] p-8 text-center shadow-2xl relative overflow-hidden">
@@ -73,10 +104,15 @@ export default function Home() {
               fontFamily: "Times New Roman",
             }}
           >
+
             Halo{" "}
+
             <span className="text-[#E7C65A]">
+
               {guestName}
+
             </span>
+
           </h1>
 
           {/* TERIMAKASIH */}
@@ -86,7 +122,9 @@ export default function Home() {
               fontFamily: "serif",
             }}
           >
+
             Terimakasih sudah menyempatkan hadir
+
           </p>
 
           {/* ICON HADIAH */}
@@ -94,7 +132,7 @@ export default function Home() {
             🎁
           </div>
 
-          {/* ORNAMEN GARIS */}
+          {/* GARIS */}
           <div className="flex items-center justify-center gap-3 mb-8">
 
             <div className="w-16 h-[1px] bg-[#D4AF37] opacity-70"></div>
@@ -107,16 +145,18 @@ export default function Home() {
 
           </div>
 
-          {/* TEXT BESAR */}
+          {/* TEXT */}
           <h2
-            className="text-white text-[20px] leading-[1.45] tracking-[2px] font-semibold"
+            className="text-white text-[26px] leading-[1.45] tracking-[2px] font-semibold"
             style={{
               fontFamily: "Times New Roman",
             }}
           >
+
             <div>SILAHKAN AMBIL</div>
 
             <div>SOUVENIR ANDA</div>
+
           </h2>
 
         </div>
@@ -125,10 +165,8 @@ export default function Home() {
     );
   }
 
-  // =========================
-  // MAIN PAGE
-  // =========================
   return (
+
     <main className="min-h-screen bg-[#7A0019] flex items-center justify-center px-4 py-6">
 
       {/* USED PAGE */}
@@ -145,13 +183,17 @@ export default function Home() {
             </div>
 
             <h2 className="text-white text-[30px] leading-tight font-semibold mb-4">
+
               Souvenir Sudah
               <br />
               Pernah Diambil
+
             </h2>
 
             <p className="text-white/70 text-sm">
+
               Kode ini sudah digunakan.
+
             </p>
 
           </div>
@@ -160,9 +202,43 @@ export default function Home() {
 
       )}
 
+      {/* NOT FOUND */}
+      {message === "NOT_FOUND" && (
+
+        <div className="fixed inset-0 bg-[#7A0019] flex items-center justify-center px-4 z-50">
+
+          <div className="w-full max-w-[280px] bg-[#8B0020] border border-[#B8860B] rounded-[30px] p-8 text-center relative shadow-2xl">
+
+            <div className="absolute inset-3 border border-[#B8860B] rounded-[22px] opacity-40"></div>
+
+            <div className="text-white text-6xl mb-5 opacity-80">
+              !
+            </div>
+
+            <h2 className="text-white text-[28px] leading-tight font-semibold mb-4">
+
+              Kode Tidak
+              <br />
+              Terdeteksi
+
+            </h2>
+
+            <p className="text-white/70 text-sm">
+
+              Silakan cek kembali kode unik Anda.
+
+            </p>
+
+          </div>
+
+        </div>
+
+      )}
+
+      {/* MAIN CARD */}
       <div className="w-full max-w-sm bg-[#8B0020] border border-yellow-700 rounded-[40px] p-5 text-center shadow-2xl relative overflow-hidden">
 
-        {/* BORDER DALAM */}
+        {/* BORDER */}
         <div className="absolute inset-3 border border-yellow-700 rounded-[32px] pointer-events-none"></div>
 
         {/* ORNAMEN */}
@@ -196,7 +272,9 @@ export default function Home() {
 
         {/* SUBTITLE */}
         <p className="text-yellow-500 tracking-[8px] text-sm mb-5">
+
           THE WEDDING OF
+
         </p>
 
         {/* NAMA */}
@@ -206,7 +284,9 @@ export default function Home() {
             fontFamily: "cursive",
           }}
         >
+
           Hanif & Tazkiya
+
         </h1>
 
         {/* TANGGAL */}
@@ -215,7 +295,9 @@ export default function Home() {
           <div className="w-14 h-[1px] bg-yellow-500"></div>
 
           <p className="text-yellow-500 tracking-[2px] text-[16px] whitespace-nowrap opacity-90">
+
             02 AGUSTUS 2026
+
           </p>
 
           <div className="w-14 h-[1px] bg-yellow-500"></div>
@@ -234,14 +316,20 @@ export default function Home() {
             fontFamily: "serif",
           }}
         >
+
           Masukkan Kode Unik Anda
+
         </p>
 
         {/* INPUT */}
         <input
           type="text"
           value={code}
-          onChange={(e) => setCode(e.target.value)}
+          onChange={(e) =>
+            setCode(
+              e.target.value
+            )
+          }
           placeholder="KODE UNIK"
           autoComplete="off"
           autoCapitalize="characters"
@@ -257,10 +345,13 @@ export default function Home() {
             fontFamily: "serif",
           }}
         >
+
           Klaim Souvenir
+
         </button>
 
       </div>
+
     </main>
   );
 }
