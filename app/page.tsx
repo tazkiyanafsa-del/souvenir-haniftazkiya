@@ -26,16 +26,10 @@ export default function Home() {
       return;
     }
 
-    // =========================
-    // JIKA SUDAH DIAMBIL
-    // =========================
     if (data.claimed) {
       return setMessage("USED");
     }
 
-    // =========================
-    // UPDATE CLAIM
-    // =========================
     await supabase
       .from("guests")
       .update({
@@ -58,44 +52,66 @@ export default function Home() {
     return (
       <main className="min-h-screen bg-[#7A0019] flex items-center justify-center px-4 py-6">
 
-        <div className="w-full max-w-sm bg-[#8B0020] border border-yellow-700 rounded-[40px] p-8 text-center shadow-2xl relative overflow-hidden">
+        <div className="w-full max-w-sm bg-[#8B0020] border border-[#C9A227] rounded-[42px] p-8 text-center shadow-2xl relative overflow-hidden">
 
           {/* BORDER DALAM */}
-          <div className="absolute inset-3 border border-yellow-700 rounded-[32px] pointer-events-none"></div>
+          <div className="absolute inset-3 border border-[#C9A227]/70 rounded-[34px] pointer-events-none"></div>
 
-          {/* CHECK */}
-          <div className="text-yellow-400 text-7xl mb-6">
-            ✓
+          {/* CHECK ICON */}
+          <div className="w-28 h-28 mx-auto rounded-full border border-[#D4AF37] flex items-center justify-center mb-8 mt-2">
+
+            <div className="text-[#E7C65A] text-6xl leading-none">
+              ✓
+            </div>
+
           </div>
 
           {/* SAPAAN */}
           <h1
-            className="text-white text-[40px] leading-tight mb-6"
+            className="text-white text-[48px] leading-tight mb-5"
             style={{
-              fontFamily: "serif",
+              fontFamily: "Times New Roman",
             }}
           >
             Halo{" "}
-            <span className="text-yellow-400">
+            <span className="text-[#E7C65A]">
               {guestName}
             </span>
           </h1>
 
-          {/* TERIMA KASIH */}
-          <p className="text-white text-xl leading-relaxed mb-10 opacity-90">
+          {/* TERIMAKASIH */}
+          <p
+            className="text-white/90 text-[22px] leading-relaxed mb-10"
+            style={{
+              fontFamily: "serif",
+            }}
+          >
             Terimakasih sudah menyempatkan hadir
           </p>
 
           {/* ICON HADIAH */}
-          <div className="text-[90px] mb-10">
+          <div className="text-[92px] mb-8 drop-shadow-lg">
             🎁
+          </div>
+
+          {/* ORNAMEN GARIS */}
+          <div className="flex items-center justify-center gap-3 mb-8">
+
+            <div className="w-16 h-[1px] bg-[#D4AF37] opacity-70"></div>
+
+            <div className="text-[#E7C65A] text-sm">
+              ✦
+            </div>
+
+            <div className="w-16 h-[1px] bg-[#D4AF37] opacity-70"></div>
+
           </div>
 
           {/* TEXT BESAR */}
           <h2
-            className="text-white text-[34px] leading-[1.3] tracking-[2px]"
+            className="text-white text-[30px] leading-[1.6] tracking-[4px] font-semibold"
             style={{
-              fontFamily: "serif",
+              fontFamily: "Times New Roman",
             }}
           >
             <div>SILAHKAN AMBIL</div>
@@ -122,22 +138,18 @@ export default function Home() {
 
           <div className="w-full max-w-[280px] bg-[#8B0020] border border-[#B8860B] rounded-[30px] p-8 text-center relative shadow-2xl">
 
-            {/* BORDER DALAM */}
             <div className="absolute inset-3 border border-[#B8860B] rounded-[22px] opacity-40"></div>
 
-            {/* ICON X */}
             <div className="text-white text-6xl mb-5 opacity-80">
               ✕
             </div>
 
-            {/* TITLE */}
             <h2 className="text-white text-[30px] leading-tight font-semibold mb-4">
               Souvenir Sudah
               <br />
               Pernah Diambil
             </h2>
 
-            {/* SUBTITLE */}
             <p className="text-white/70 text-sm">
               Kode ini sudah digunakan.
             </p>
