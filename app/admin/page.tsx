@@ -2,12 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
+
 import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 export default function AdminPage() {
 
-  const [guests, setGuests] =
-    useState<any[]>([]);
+  // LOGIN
+  const ADMIN_PASSWORD = "haniftazkiya";
+
+  const [isLogin, setIsLogin] =
+    useState(false);
 
   const [password, setPassword] =
     useState("");
@@ -15,8 +20,9 @@ export default function AdminPage() {
   const [showPassword, setShowPassword] =
     useState(false);
 
-  const [isLogin, setIsLogin] =
-    useState(false);
+  // DATA
+  const [guests, setGuests] =
+    useState<any[]>([]);
 
   const [name, setName] =
     useState("");
@@ -24,27 +30,38 @@ export default function AdminPage() {
   const [code, setCode] =
     useState("");
 
-  // =========================
+  // LOGIN
+  function handleLogin() {
+
+    if (
+      password === ADMIN_PASSWORD
+    ) {
+
+      setIsLogin(true);
+
+    } else {
+
+      alert("Password salah 😭");
+
+    }
+  }
+
   // FETCH DATA
-  // =========================
   async function fetchGuests() {
 
-    const { data } =
-      await supabase
-        .from("guests")
-        .select("*")
-        .order("id", {
-          ascending: true,
-        });
+    const { data } = await supabase
+      .from("guests")
+      .select("*")
+      .order("id", {
+        ascending: true,
+      });
 
     if (data) {
       setGuests(data);
     }
   }
 
-  // =========================
   // REALTIME
-  // =========================
   useEffect(() => {
 
     if (isLogin) {
@@ -78,54 +95,19 @@ export default function AdminPage() {
 
   }, [isLogin]);
 
-  // =========================
-  // LOGIN
-  // =========================
-  function handleLogin() {
-
-    if (password === "haniftazkiya") {
-
-      setIsLogin(true);
-
-    } else {
-
-      alert("Password salah 😭");
-
-    }
-  }
-
-  // =========================
-  // TAMBAH TAMU
-  // =========================
+  // ADD GUEST
   async function addGuest() {
 
-    if (!name || !code) {
+    if (!name || !code) return;
 
-      alert("Isi semua data 😭");
-
-      return;
-    }
-
-    const { error } =
-      await supabase
-        .from("guests")
-        .insert([
-          {
-            name,
-            code:
-              code.toUpperCase(),
-            claimed: false,
-          },
-        ]);
-
-    if (error) {
-
-      alert(
-        "Gagal tambah tamu 😭"
-      );
-
-      return;
-    }
+    await supabase
+      .from("guests")
+      .insert([
+        {
+          name,
+          code: code.toUpperCase(),
+        },
+      ]);
 
     setName("");
     setCode("");
@@ -133,9 +115,18 @@ export default function AdminPage() {
     fetchGuests();
   }
 
-  // =========================
+  // DELETE
+  async function deleteGuest(id: number) {
+
+    await supabase
+      .from("guests")
+      .delete()
+      .eq("id", id);
+
+    fetchGuests();
+  }
+
   // RESET CLAIM
-  // =========================
   async function resetClaim(id: number) {
 
     await supabase
@@ -149,39 +140,94 @@ export default function AdminPage() {
     fetchGuests();
   }
 
-  // =========================
-  // DELETE TAMU
-  // =========================
-  async function deleteGuest(id: number) {
+  // IMPORT EXCEL
+  async function importExcel(
+    event: any
+  ) {
 
-    await supabase
-      .from("guests")
-      .delete()
-      .eq("id", id);
+    const file =
+      event.target.files[0];
 
-    fetchGuests();
+    if (!file) return;
+
+    const reader =
+      new FileReader();
+
+    reader.onload = async (
+      e: any
+    ) => {
+
+      const data =
+        new Uint8Array(
+          e.target.result
+        );
+
+      const workbook =
+        XLSX.read(data, {
+          type: "array",
+        });
+
+      const sheetName =
+        workbook.SheetNames[0];
+
+      const worksheet =
+        workbook.Sheets[sheetName];
+
+      const jsonData =
+        XLSX.utils.sheet_to_json(
+          worksheet
+        );
+
+      const formattedData =
+        jsonData.map((item: any) => ({
+          name: item.Nama,
+          code: item.Kode,
+        }));
+
+      await supabase
+        .from("guests")
+        .insert(formattedData);
+
+      fetchGuests();
+
+      alert("Import berhasil 😎");
+    };
+
+    reader.readAsArrayBuffer(file);
   }
 
-  // =========================
   // EXPORT EXCEL
-  // =========================
   function exportExcel() {
+
+    const dataExport =
+      guests.map((guest) => ({
+        Nama: guest.name,
+
+        Kode: guest.code,
+
+        Status: guest.claimed
+          ? "Sudah Ambil"
+          : "Belum Ambil",
+
+        Waktu_Ambil:
+          guest.claimed_at
+            ? new Date(
+                new Date(
+                  guest.claimed_at
+                ).getTime() +
+                7 *
+                  60 *
+                  60 *
+                  1000
+              ).toLocaleString(
+                "id-ID"
+              )
+            : "-",
+      }));
 
     const worksheet =
       XLSX.utils.json_to_sheet(
-
-        guests.map((g) => ({
-
-          Nama: g.name,
-
-          Kode: g.code,
-
-          SudahAmbil:
-            g.claimed
-              ? "Ya"
-              : "Belum",
-
-        }))
+        dataExport
       );
 
     const workbook =
@@ -190,99 +236,43 @@ export default function AdminPage() {
     XLSX.utils.book_append_sheet(
       workbook,
       worksheet,
-      "Tamu"
+      "Daftar Tamu"
     );
 
-    XLSX.writeFile(
-      workbook,
-      "daftar_tamu.xlsx"
+    const excelBuffer =
+      XLSX.write(workbook, {
+        bookType: "xlsx",
+        type: "array",
+      });
+
+    const fileData = new Blob(
+      [excelBuffer],
+      {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
+      }
+    );
+
+    saveAs(
+      fileData,
+      "daftar-tamu.xlsx"
     );
   }
 
-  // =========================
-  // IMPORT EXCEL
-  // =========================
-  async function importExcel(e: any) {
-
-    const file =
-      e.target.files?.[0];
-
-    if (!file) return;
-
-    const reader =
-      new FileReader();
-
-    reader.onload = async (
-      evt: any
-    ) => {
-
-      const data =
-        new Uint8Array(
-          evt.target.result
-        );
-
-      const workbook =
-        XLSX.read(data, {
-          type: "array",
-        });
-
-      const sheet =
-        workbook.Sheets[
-          workbook.SheetNames[0]
-        ];
-
-      const json: any[] =
-        XLSX.utils.sheet_to_json(
-          sheet
-        );
-
-      const formatted =
-        json.map((item) => ({
-
-          name: item.Nama,
-
-          code: String(
-            item.Kode
-          ).toUpperCase(),
-
-          claimed: false,
-
-        }));
-
-      await supabase
-        .from("guests")
-        .insert(formatted);
-
-      fetchGuests();
-
-      alert(
-        "Import berhasil 😎🔥"
-      );
-    };
-
-    reader.readAsArrayBuffer(file);
-  }
-
-  // =========================
   // LOGIN PAGE
-  // =========================
   if (!isLogin) {
 
     return (
 
-      <main className="min-h-screen bg-[#7A0019] flex items-center justify-center px-4">
+      <main className="min-h-screen bg-[#5B0015] flex items-center justify-center p-6">
 
-        <div className="w-full max-w-sm bg-[#8B0020] border border-yellow-700 rounded-[40px] p-8 shadow-2xl relative overflow-hidden text-center">
+        <div className="bg-[#76001F] border border-yellow-700 rounded-3xl p-10 w-full max-w-md relative">
 
-          <div className="absolute inset-3 border border-yellow-700 rounded-[32px] pointer-events-none"></div>
-
-          <h1 className="text-white text-4xl mb-8">
-
+          <h1 className="text-4xl text-[#F8F3EA] mb-8 text-center">
             Admin Login
-
           </h1>
 
-          <div className="relative mb-6">
+          <div className="relative">
 
             <input
               type={
@@ -290,6 +280,8 @@ export default function AdminPage() {
                   ? "text"
                   : "password"
               }
+
+              placeholder="Password Admin"
 
               value={password}
 
@@ -299,9 +291,7 @@ export default function AdminPage() {
                 )
               }
 
-              placeholder="Password"
-
-              className="w-full bg-white text-black rounded-[24px] px-5 py-4 outline-none text-lg"
+              className="w-full bg-[#F5F0E8] text-black rounded-2xl p-4 outline-none mb-6"
             />
 
             <button
@@ -313,12 +303,12 @@ export default function AdminPage() {
                 )
               }
 
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-black"
+              className="absolute right-4 top-4 text-black"
             >
 
               {showPassword
-                ? "🙈"
-                : "👁️"}
+                ? "👁️"
+                : "🙈"}
 
             </button>
 
@@ -326,12 +316,9 @@ export default function AdminPage() {
 
           <button
             onClick={handleLogin}
-
-            className="w-full bg-gradient-to-r from-yellow-700 to-yellow-500 text-black font-bold py-4 rounded-[24px] text-xl"
+            className="w-full bg-gradient-to-r from-yellow-700 to-yellow-500 text-black rounded-2xl p-4 font-bold"
           >
-
-            Masuk
-
+            Login
           </button>
 
         </div>
@@ -340,147 +327,78 @@ export default function AdminPage() {
     );
   }
 
-  // =========================
-  // DASHBOARD
-  // =========================
+  // ADMIN PAGE
   return (
 
-    <main className="min-h-screen bg-[#7A0019] p-6 text-white">
+    <main className="min-h-screen bg-[#5B0015] p-6">
 
-      <h1 className="text-5xl mb-2 font-light">
+      {/* TITLE */}
+      <div className="mb-10">
 
-        Admin Dashboard
+        <h1 className="text-5xl text-[#F8F3EA] mb-3">
+          Admin Dashboard
+        </h1>
 
-      </h1>
+        <p className="text-yellow-500 text-xl">
+          Wedding Souvenir
+        </p>
 
-      <p className="text-yellow-500 text-2xl mb-10">
+      </div>
 
-        Wedding Souvenir
+      {/* STATS */}
+      <div className="grid grid-cols-2 gap-4 mb-10">
 
-      </p>
+        <div className="bg-[#76001F] border border-yellow-700 rounded-3xl p-6">
 
-      {/* CARD */}
-      <div className="grid md:grid-cols-2 gap-6 mb-10">
-
-        <div className="bg-[#8B0020] border border-yellow-700 rounded-[30px] p-10">
-
-          <p className="text-yellow-500 text-2xl mb-4">
-
+          <h2 className="text-yellow-500 text-lg mb-2">
             Total Tamu
-
-          </p>
-
-          <h2 className="text-6xl font-bold">
-
-            {guests.length}
-
           </h2>
+
+          <p className="text-[#F8F3EA] text-4xl font-bold">
+            {guests.length}
+          </p>
 
         </div>
 
-        <div className="bg-[#8B0020] border border-yellow-700 rounded-[30px] p-10">
+        <div className="bg-[#76001F] border border-yellow-700 rounded-3xl p-6">
 
-          <p className="text-yellow-500 text-2xl mb-4">
-
+          <h2 className="text-yellow-500 text-lg mb-2">
             Sudah Ambil
+          </h2>
 
-          </p>
-
-          <h2 className="text-6xl font-bold">
+          <p className="text-[#F8F3EA] text-4xl font-bold">
 
             {
               guests.filter(
-                (g) => g.claimed
+                (g) =>
+                  g.claimed
               ).length
             }
 
-          </h2>
+          </p>
 
         </div>
 
       </div>
 
-      {/* TAMBAH DATA */}
-      <div className="bg-[#8B0020] border border-yellow-700 rounded-[30px] p-6 mb-10">
-
-        <h2 className="text-3xl mb-6">
-
-          Tambah Data Tamu
-
-        </h2>
-
-        <div className="grid md:grid-cols-3 gap-4">
-
-          <input
-            type="text"
-
-            placeholder="Nama Tamu"
-
-            value={name}
-
-            onChange={(e) =>
-              setName(
-                e.target.value
-              )
-            }
-
-            className="bg-white text-black rounded-[20px] px-5 py-4 outline-none"
-          />
-
-          <input
-            type="text"
-
-            placeholder="Kode"
-
-            value={code}
-
-            onChange={(e) =>
-              setCode(
-                e.target.value
-              )
-            }
-
-            className="bg-white text-black rounded-[20px] px-5 py-4 outline-none uppercase"
-          />
-
-          <button
-            onClick={addGuest}
-
-            className="bg-gradient-to-r from-yellow-700 to-yellow-500 text-black font-bold rounded-[20px] px-5 py-4"
-          >
-
-            Tambah
-
-          </button>
-
-        </div>
-
-      </div>
-
-      {/* BUTTON */}
-      <div className="flex gap-4 mb-10 flex-wrap">
+      {/* IMPORT EXPORT */}
+      <div className="mb-6 flex gap-4 flex-wrap">
 
         <button
           onClick={exportExcel}
-
-          className="bg-green-700 hover:bg-green-600 px-8 py-4 rounded-[20px] text-xl font-semibold"
+          className="bg-green-700 text-white px-6 py-3 rounded-2xl font-bold"
         >
-
           Export Excel
-
         </button>
 
-        <label className="bg-blue-900 hover:bg-blue-800 px-8 py-4 rounded-[20px] text-xl font-semibold cursor-pointer">
+        <label className="bg-blue-700 text-white px-6 py-3 rounded-2xl font-bold cursor-pointer">
 
           Import Excel
 
           <input
             type="file"
-
             accept=".xlsx,.xls"
-
-            className="hidden"
-
+            hidden
             onChange={importExcel}
           />
 
@@ -488,28 +406,76 @@ export default function AdminPage() {
 
       </div>
 
+      {/* ADD GUEST */}
+      <div className="bg-[#76001F] border border-yellow-700 rounded-3xl p-6 mb-10">
+
+        <h2 className="text-[#F8F3EA] text-3xl mb-6">
+          Tambah Tamu
+        </h2>
+
+        <div className="grid md:grid-cols-3 gap-4">
+
+          <input
+            type="text"
+            placeholder="Nama Tamu"
+            value={name}
+            onChange={(e) =>
+              setName(
+                e.target.value
+              )
+            }
+            className="bg-[#F5F0E8] text-black rounded-2xl p-4 outline-none"
+          />
+
+          <input
+            type="text"
+            placeholder="KODE UNIK"
+            value={code}
+            onChange={(e) =>
+              setCode(
+                e.target.value.toUpperCase()
+              )
+            }
+            className="bg-[#F5F0E8] text-black rounded-2xl p-4 outline-none uppercase"
+          />
+
+          <button
+            onClick={addGuest}
+            className="bg-gradient-to-r from-yellow-700 to-yellow-500 text-black rounded-2xl p-4 font-bold"
+          >
+            Tambah
+          </button>
+
+        </div>
+
+      </div>
+
       {/* TABLE */}
-      <div className="bg-[#8B0020] border border-yellow-700 rounded-[30px] p-6 overflow-auto">
+      <div className="bg-[#76001F] border border-yellow-700 rounded-3xl overflow-hidden overflow-x-auto">
 
-        <table className="w-full text-left">
+        <table className="w-full">
 
-          <thead>
+          <thead className="bg-[#8A0023]">
 
-            <tr className="border-b border-yellow-700">
+            <tr>
 
-              <th className="p-4">
+              <th className="text-left p-4 text-yellow-500">
                 Nama
               </th>
 
-              <th className="p-4">
+              <th className="text-left p-4 text-yellow-500">
                 Kode
               </th>
 
-              <th className="p-4">
+              <th className="text-left p-4 text-yellow-500">
                 Status
               </th>
 
-              <th className="p-4">
+              <th className="text-left p-4 text-yellow-500">
+                Waktu Ambil
+              </th>
+
+              <th className="text-left p-4 text-yellow-500">
                 Aksi
               </th>
 
@@ -519,69 +485,88 @@ export default function AdminPage() {
 
           <tbody>
 
-            {guests.map((guest) => (
+            {guests.map(
+              (guest) => (
 
-              <tr
-                key={guest.id}
+                <tr
+                  key={guest.id}
+                  className="border-t border-yellow-900"
+                >
 
-                className="border-b border-[#A00028]"
-              >
+                  <td className="p-4 text-[#F8F3EA]">
+                    {guest.name}
+                  </td>
 
-                <td className="p-4">
+                  <td className="p-4 text-[#F8F3EA]">
+                    {guest.code}
+                  </td>
 
-                  {guest.name}
+                  <td className="p-4">
 
-                </td>
+                    {guest.claimed ? (
 
-                <td className="p-4">
+                      <span className="bg-green-700 text-white px-4 py-2 rounded-full text-sm">
+                        Sudah Ambil
+                      </span>
 
-                  {guest.code}
+                    ) : (
 
-                </td>
+                      <span className="bg-red-700 text-white px-4 py-2 rounded-full text-sm">
+                        Belum Ambil
+                      </span>
 
-                <td className="p-4">
+                    )}
 
-                  {guest.claimed
-                    ? "✅ Sudah"
-                    : "❌ Belum"}
+                  </td>
 
-                </td>
+                  <td className="p-4 text-[#F8F3EA] whitespace-nowrap">
 
-                <td className="p-4 flex gap-2 flex-wrap">
+                    {guest.claimed_at
+                      ? new Date(
+                          new Date(
+                            guest.claimed_at
+                          ).getTime() +
+                          7 *
+                            60 *
+                            60 *
+                            1000
+                        ).toLocaleString(
+                          "id-ID"
+                        )
+                      : "-"}
 
-                  <button
-                    onClick={() =>
-                      resetClaim(
-                        guest.id
-                      )
-                    }
+                  </td>
 
-                    className="bg-yellow-600 hover:bg-yellow-500 text-black px-4 py-2 rounded-xl"
-                  >
+                  <td className="p-4 flex gap-2">
 
-                    Reset
+                    <button
+                      onClick={() =>
+                        resetClaim(
+                          guest.id
+                        )
+                      }
+                      className="bg-yellow-600 text-black px-4 py-2 rounded-xl text-sm font-bold"
+                    >
+                      Reset
+                    </button>
 
-                  </button>
+                    <button
+                      onClick={() =>
+                        deleteGuest(
+                          guest.id
+                        )
+                      }
+                      className="bg-red-700 text-white px-4 py-2 rounded-xl text-sm font-bold"
+                    >
+                      Delete
+                    </button>
 
-                  <button
-                    onClick={() =>
-                      deleteGuest(
-                        guest.id
-                      )
-                    }
+                  </td>
 
-                    className="bg-red-700 hover:bg-red-600 px-4 py-2 rounded-xl"
-                  >
+                </tr>
 
-                    Hapus
-
-                  </button>
-
-                </td>
-
-              </tr>
-
-            ))}
+              )
+            )}
 
           </tbody>
 
