@@ -109,7 +109,7 @@ export default function Home() {
 
           {/* TEXT BESAR */}
           <h2
-            className="text-white text-[30px] leading-[1.6] tracking-[4px] font-semibold"
+            className="text-white text-[20px] leading-[1.45] tracking-[2px] font-semibold"
             style={{
               fontFamily: "Times New Roman",
             }}
