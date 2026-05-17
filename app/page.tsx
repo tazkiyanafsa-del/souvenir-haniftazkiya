@@ -64,8 +64,14 @@ export default function Home() {
         {/* LOGO */}
         <div className="w-44 h-44 mx-auto border border-yellow-600 rounded-full flex items-center justify-center mt-8 mb-10">
 
-          <div className="text-yellow-500 text-6xl tracking-[12px] font-light">
-            H | T
+          <div className="text-yellow-500 text-6xl tracking-[12px] font-light flex items-center gap-5">
+
+            <span>H</span>
+
+            <span>|</span>
+
+            <span>T</span>
+
           </div>
 
         </div>
@@ -76,12 +82,13 @@ export default function Home() {
         </p>
 
         {/* NAMA */}
-        <h1 className="text-[20px] md:text-[32px] text-white leading-[1.1] mb-8 opacity-90">
-
-          <div>Hanif &</div>
-
-          <div>Tazkiya</div>
-
+        <h1
+          className="text-[34px] md:text-[48px] text-white leading-none mb-10 opacity-95"
+          style={{
+            fontFamily: "cursive",
+          }}
+        >
+          Hanif & Tazkiya
         </h1>
 
         {/* TANGGAL */}
@@ -102,11 +109,17 @@ export default function Home() {
           ✦
         </div>
 
-        {/* INPUT */}
-        <p className="text-white text-2xl mb-6">
+        {/* INPUT TITLE */}
+        <p
+          className="text-white text-[20px] mb-6"
+          style={{
+            fontFamily: "serif",
+          }}
+        >
           Masukkan Kode Unik Anda
         </p>
 
+        {/* INPUT */}
         <input
           type="text"
           value={code}
@@ -115,16 +128,32 @@ export default function Home() {
           autoComplete="off"
           autoCapitalize="characters"
           spellCheck={false}
-          className="w-full bg-[#F5F0E8] text-black text-2xl text-center rounded-[28px] p-5 outline-none uppercase mb-5"
+          className="w-full bg-[#F5F0E8] text-[#6B0018] tracking-[6px] text-xl text-center rounded-[28px] p-5 outline-none uppercase mb-6"
         />
 
         {/* BUTTON */}
         <button
           onClick={handleClaim}
-          className="w-full bg-gradient-to-r from-yellow-700 to-yellow-500 text-black font-bold text-xl py-5 rounded-[28px] hover:opacity-90 transition"
+          className="w-full bg-gradient-to-r from-yellow-600 to-yellow-400 text-[#6B0018] font-semibold text-2xl py-5 rounded-[28px] hover:opacity-90 transition"
+          style={{
+            fontFamily: "serif",
+          }}
         >
           Klaim Souvenir
         </button>
+
+        {/* ORNAMEN BAWAH */}
+        <div className="flex items-center justify-center gap-3 mt-10 mb-2">
+
+          <div className="w-20 h-[1px] bg-yellow-600"></div>
+
+          <div className="text-yellow-500 text-2xl">
+            ❀
+          </div>
+
+          <div className="w-20 h-[1px] bg-yellow-600"></div>
+
+        </div>
 
         {/* MESSAGE */}
         {message && (
