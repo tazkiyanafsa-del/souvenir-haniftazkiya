@@ -76,15 +76,12 @@ export default function Home() {
         </p>
 
         {/* NAMA */}
-        <h1
-          className="text-[28px] md:text-[42px] text-white leading-[1.1] mb-8 opacity-90"
-          style={{
-            fontFamily: "cursive",
-          }}
-        >
+        <h1 className="text-[20px] md:text-[32px] text-white leading-[1.1] mb-8 opacity-90">
+
           <div>Hanif &</div>
 
           <div>Tazkiya</div>
+
         </h1>
 
         {/* TANGGAL */}
